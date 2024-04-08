@@ -19,12 +19,7 @@ class MainScreenState extends State<MainScreen> {
   // Current Selected Screen Index
   int _selectedIndex = 0;
   // List of Screens
-  static final List<Widget> _screenSelector = <Widget>[
-    TrendingScreen.getScreen(),
-    HomeScreen.getScreen(),
-    SavedNewsScreen.getScreen(),
-    SettingsScreen.getScreen()
-  ];
+  late List<Widget> _screenSelector;
 
   // Makes sure that screen will listen to theme mode changes
   @override
@@ -34,12 +29,31 @@ class MainScreenState extends State<MainScreen> {
     window.onPlatformBrightnessChanged = () {
       WidgetsBinding.instance?.handlePlatformBrightnessChanged();
       // Forces to update the screen
-      setState(() {});
+      setState(
+        () {
+          _reloadScreens();
+        },
+      );
     };
+    // Initializing screen
+    _reloadScreens();
+  }
+
+  // Reloads Screen to sync with system theme update
+  void _reloadScreens() {
+    print("reloaded!");
+    _screenSelector = <Widget>[
+      // DO NOT PUT KEYWORD "CONST"
+      TrendingScreen(),
+      HomeScreen(),
+      SavedNewsScreen(),
+      SettingsScreen()
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
+    print("building main");
     return Scaffold(
       bottomNavigationBar: _buildBottomNavBar(),
       // Body changes screen according to selectedIndex
@@ -92,7 +106,7 @@ class MainScreenState extends State<MainScreen> {
           _isDarkMode() ? darkUnselectedItemColor : lightUnselectedItemColor,
       currentIndex: _selectedIndex,
       iconSize: iconSize,
-      onTap: _onBottomNavBarTap,
+      onTap: (index) => setState(() => _selectedIndex = index),
     );
   }
 
@@ -100,14 +114,5 @@ class MainScreenState extends State<MainScreen> {
   bool _isDarkMode() {
     return SchedulerBinding.instance.platformDispatcher.platformBrightness ==
         Brightness.dark;
-  }
-
-  // Function called when tapped on icon on bottom navigation bar; changes the page by selecting the index
-  void _onBottomNavBarTap(int index) {
-    setState(
-      () {
-        _selectedIndex = index;
-      },
-    );
   }
 }
