@@ -1,5 +1,9 @@
+/* 
+  Main Screen of the App
+*/
+
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:senewrs/src/helpers/settings_helper.dart';
 import 'package:senewrs/src/screens/home_screen.dart';
 import 'package:senewrs/src/screens/saved_news_screen.dart';
 import 'package:senewrs/src/screens/settings_screen.dart';
@@ -19,9 +23,10 @@ class MainScreenState extends State<MainScreen> {
   // Current Selected Screen Index
   int _selectedIndex = 0;
   // List of Screens
-  late List<Widget> _screenSelector;
+  late List<Widget> _appScreens;
 
-  // Makes sure that screen will listen to theme mode changes
+  // Makes sure that screen will listen to system theme mode changes
+  // TO BE REMOVED
   @override
   void initState() {
     super.initState();
@@ -39,26 +44,38 @@ class MainScreenState extends State<MainScreen> {
     _reloadScreens();
   }
 
-  // Reloads Screen to sync with system theme update
+  // Reloads Screen to sync with app theme update
   void _reloadScreens() {
-    print("reloaded!");
-    _screenSelector = <Widget>[
-      // DO NOT PUT KEYWORD "CONST"
-      TrendingScreen(),
-      HomeScreen(),
-      SavedNewsScreen(),
-      SettingsScreen()
+    _appScreens = <Widget>[
+      TrendingScreen(settingsController: widget.settingsController),
+      HomeScreen(settingsController: widget.settingsController),
+      SavedNewsScreen(settingsController: widget.settingsController),
+      SettingsScreen(settingsController: widget.settingsController)
     ];
+    print("reloaded!");
   }
 
   @override
   Widget build(BuildContext context) {
-    print("building main");
+    rebuildAllChildren(context);
     return Scaffold(
       bottomNavigationBar: _buildBottomNavBar(),
       // Body changes screen according to selectedIndex
-      body: _screenSelector.elementAt(_selectedIndex),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _appScreens,
+      ),
     );
+  }
+
+  // Rebuilds all screens when app theme has updated
+  void rebuildAllChildren(BuildContext context) {
+    void rebuild(Element el) {
+      el.markNeedsBuild();
+      el.visitChildren(rebuild);
+    }
+
+    (context as Element).visitChildren(rebuild);
   }
 
   // Returns the Bottom Navigation Bar Widget
@@ -99,20 +116,20 @@ class MainScreenState extends State<MainScreen> {
       ],
       type: BottomNavigationBarType.fixed,
       backgroundColor:
-          _isDarkMode() ? darkBackgroundColor : lightBackgroundColor,
+          SettingsHelper.isDarkMode(widget.settingsController.themeMode)
+              ? darkBackgroundColor
+              : lightBackgroundColor,
       selectedItemColor:
-          _isDarkMode() ? darkSelectedItemColor : lightSelectedItemColor,
+          SettingsHelper.isDarkMode(widget.settingsController.themeMode)
+              ? darkSelectedItemColor
+              : lightSelectedItemColor,
       unselectedItemColor:
-          _isDarkMode() ? darkUnselectedItemColor : lightUnselectedItemColor,
+          SettingsHelper.isDarkMode(widget.settingsController.themeMode)
+              ? darkUnselectedItemColor
+              : lightUnselectedItemColor,
       currentIndex: _selectedIndex,
       iconSize: iconSize,
       onTap: (index) => setState(() => _selectedIndex = index),
     );
-  }
-
-  // Returns True if dark mode is enabled; used in changing UI colors
-  bool _isDarkMode() {
-    return SchedulerBinding.instance.platformDispatcher.platformBrightness ==
-        Brightness.dark;
   }
 }

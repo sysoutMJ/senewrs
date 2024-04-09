@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:senewrs/src/helpers/settings_helper.dart';
+import 'package:senewrs/src/settings/settings_controller.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, required this.settingsController});
 
+  // Retrieving Settings Controller to change system themes
+  final SettingsController settingsController;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -20,16 +23,20 @@ class _HomeScreenState extends State<HomeScreen> {
     print("building homescreen");
     return SingleChildScrollView(
       child: Column(
-        children: [
-          Image(image: _isDarkMode() ? senewrsLogoLight : senewrsLogoDark)
-        ],
+        children: _test(),
       ),
     );
   }
 
-  // Returns True if dark mode is enabled; used in changing UI colors
-  bool _isDarkMode() {
-    return SchedulerBinding.instance.platformDispatcher.platformBrightness ==
-        Brightness.dark;
+  List<Widget> _test() {
+    List<Widget> myList = [];
+    for (var i = 0; i < 15; i++) {
+      myList.add(Image(
+          image: SettingsHelper.isDarkMode(widget.settingsController.themeMode)
+              ? senewrsLogoLight
+              : senewrsLogoDark));
+      myList.add(Text(i.toString()));
+    }
+    return myList;
   }
 }
