@@ -3,16 +3,61 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:senewrs/src/screens/main_screen.dart';
 import 'settings/settings_controller.dart';
-import 'settings/settings_view.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
-  const MyApp({
+  MyApp({
     super.key,
     required this.settingsController,
   });
-
   final SettingsController settingsController;
+
+  // APP THEMES
+  // Light Mode
+  //
+  final ThemeData _lightThemeMode = ThemeData(
+    brightness: Brightness.light,
+    useMaterial3: true,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.black),
+      ),
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Color(0xffD9D9D9),
+      selectedItemColor: Color(0xffFADB41),
+      unselectedItemColor: Colors.black,
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.grey),
+      ),
+    ),
+  );
+
+  //
+  // Dark Mode
+  //
+  final ThemeData _darkThemeMode = ThemeData(
+    brightness: Brightness.dark,
+    useMaterial3: true,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.white),
+        backgroundColor: MaterialStateProperty.all(const Color(0xff555555)),
+      ),
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Color(0xff353535),
+      selectedItemColor: Color(0xff4662FF),
+      unselectedItemColor: Colors.white,
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.white),
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +69,13 @@ class MyApp extends StatelessWidget {
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
         return MaterialApp(
+          // Define a light and dark color theme. Then, read the user's
+          // preferred ThemeMode (light, dark, or system default) from the
+          // SettingsController to display the correct theme.
+          theme: _lightThemeMode,
+          darkTheme: _darkThemeMode,
+          themeMode: settingsController.themeMode,
+
           // Providing a restorationScopeId allows the Navigator built by the
           // MaterialApp to restore the navigation stack when a user leaves and
           // returns to the app after it has been killed while running in the
@@ -50,13 +102,6 @@ class MyApp extends StatelessWidget {
           // directory.
           onGenerateTitle: (BuildContext context) =>
               AppLocalizations.of(context)!.appTitle,
-
-          // Define a light and dark color theme. Then, read the user's
-          // preferred ThemeMode (light, dark, or system default) from the
-          // SettingsController to display the correct theme.
-          theme: ThemeData(),
-          darkTheme: ThemeData.dark(),
-          themeMode: settingsController.themeMode,
 
           // Debug Banner
           debugShowCheckedModeBanner: true,

@@ -8,7 +8,6 @@ import 'package:senewrs/src/screens/saved_news_screen.dart';
 import 'package:senewrs/src/screens/settings_screen.dart';
 import 'package:senewrs/src/screens/trending_screen.dart';
 import 'package:senewrs/src/settings/settings_controller.dart';
-import 'package:senewrs/src/settings/settings_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key, required this.settingsController});
@@ -72,14 +71,6 @@ class MainScreenState extends State<MainScreen> {
   Widget _buildBottomNavBar() {
     // Easy to change values
     const iconSize = 40.0;
-    // Light Mode Colors
-    const lightBackgroundColor = Color(0xffD9D9D9);
-    const lightSelectedItemColor = Color(0xffFADB41);
-    const lightUnselectedItemColor = Colors.black;
-    // Dark Mode Colors
-    const darkBackgroundColor = Color(0xff353535);
-    const darkSelectedItemColor = Color(0xff4662FF);
-    const darkUnselectedItemColor = Colors.white;
 
     return BottomNavigationBar(
       items: const [
@@ -105,18 +96,6 @@ class MainScreenState extends State<MainScreen> {
         ),
       ],
       type: BottomNavigationBarType.fixed,
-      backgroundColor:
-          SettingsService.isDarkMode(widget.settingsController.themeMode)
-              ? darkBackgroundColor
-              : lightBackgroundColor,
-      selectedItemColor:
-          SettingsService.isDarkMode(widget.settingsController.themeMode)
-              ? darkSelectedItemColor
-              : lightSelectedItemColor,
-      unselectedItemColor:
-          SettingsService.isDarkMode(widget.settingsController.themeMode)
-              ? darkUnselectedItemColor
-              : lightUnselectedItemColor,
       currentIndex: _selectedIndex,
       iconSize: iconSize,
       onTap: (index) => setState(() => _selectedIndex = index),

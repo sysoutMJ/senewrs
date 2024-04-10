@@ -10,6 +10,7 @@ class SettingsService {
   late final SharedPreferences _sharedPrefs;
   final double defaultFontSize = 18;
 
+  // Loading SharedPreferences instance
   Future<void> initPrefs() async {
     _sharedPrefs = await SharedPreferences.getInstance();
   }

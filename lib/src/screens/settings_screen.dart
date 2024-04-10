@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:senewrs/src/settings/settings_controller.dart';
 import 'package:senewrs/src/settings/settings_service.dart';
 
@@ -70,10 +71,12 @@ class _SettingsScreeState extends State<SettingsScreen> {
           Expanded(
             child: Container(
               alignment: Alignment.center,
-              child: SettingsService.isDarkMode(
-                      widget.settingsController.themeMode)
-                  ? const Text("Dark Mode")
-                  : const Text("Light Mode"),
+              child: Text(
+                SettingsService.isDarkMode(widget.settingsController.themeMode)
+                    ? "Dark Mode"
+                    : "Light Mode",
+                style: GoogleFonts.robotoSerif(),
+              ),
             ),
           ),
         ],
@@ -117,7 +120,7 @@ class _SettingsScreeState extends State<SettingsScreen> {
           ),
           child: Text(
             "Font Size",
-            style: TextStyle(fontSize: fontSize),
+            style: GoogleFonts.robotoSerif(fontSize: fontSize),
           ),
         ),
         // Gap

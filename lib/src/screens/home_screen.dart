@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:senewrs/src/settings/settings_controller.dart';
 import 'package:senewrs/src/settings/settings_service.dart';
 
@@ -18,25 +20,70 @@ class _HomeScreenState extends State<HomeScreen> {
   final senewrsLogoLight =
       const AssetImage("assets/images/senewrs_logo_light.png");
 
+  final _appNameStyle = GoogleFonts.robotoSerif(
+    textStyle: const TextStyle(fontSize: 50),
+  );
+
   @override
   Widget build(BuildContext context) {
     print("building homescreen");
     return SingleChildScrollView(
-      child: Column(
-        children: _test(),
+      child: Center(
+        child: FractionallySizedBox(
+          widthFactor: 0.8,
+          child: Container(
+            decoration: BoxDecoration(color: Colors.amber),
+            child: Column(
+              children: [
+                // Senewrs Logo
+                Image(
+                    image: SettingsService.isDarkMode(
+                            widget.settingsController.themeMode)
+                        ? senewrsLogoLight
+                        : senewrsLogoDark),
+                // App Name
+                Text(
+                  "SENEWRS",
+                  style: _appNameStyle,
+                ),
+                _buildSearchWidget()
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  List<Widget> _test() {
-    List<Widget> myList = [];
-    for (var i = 0; i < 15; i++) {
-      myList.add(Image(
-          image: SettingsService.isDarkMode(widget.settingsController.themeMode)
-              ? senewrsLogoLight
-              : senewrsLogoDark));
-      myList.add(Text(i.toString()));
-    }
-    return myList;
+  // Builds the search widget
+  Widget _buildSearchWidget() {
+    return Row(
+      children: [
+        // Text Field
+        Flexible(
+          child: TextField(
+            decoration: InputDecoration(
+                hintText: "Search",
+                border: const OutlineInputBorder(),
+                filled: true,
+                fillColor: SettingsService.isDarkMode(
+                        widget.settingsController.themeMode)
+                    ? const Color(0xff1C1C1C)
+                    : Colors.white),
+          ),
+        ),
+        FilledButton(
+          onPressed: () => print("searching..."),
+          style: FilledButton.styleFrom(
+            minimumSize: const Size(50, 64),
+            shape: const ContinuousRectangleBorder(),
+            backgroundColor: Colors.black,
+          ),
+          child: const Icon(
+            Icons.search,
+          ),
+        )
+      ],
+    );
   }
 }
