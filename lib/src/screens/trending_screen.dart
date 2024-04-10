@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:senewrs/src/helpers/settings_helper.dart';
 import 'package:senewrs/src/settings/settings_controller.dart';
+import 'package:senewrs/src/settings/settings_service.dart';
 
 class TrendingScreen extends StatefulWidget {
   const TrendingScreen({super.key, required this.settingsController});
@@ -34,7 +34,7 @@ class _TrendingScreenState extends State<TrendingScreen> {
       myList.add(
         Image(
             image:
-                SettingsHelper.isDarkMode(widget.settingsController.themeMode)
+                SettingsService.isDarkMode(widget.settingsController.themeMode)
                     ? senewrsLogoDark
                     : senewrsLogoLight),
       );

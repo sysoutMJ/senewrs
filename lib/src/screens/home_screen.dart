@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:senewrs/src/helpers/settings_helper.dart';
 import 'package:senewrs/src/settings/settings_controller.dart';
+import 'package:senewrs/src/settings/settings_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.settingsController});
@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     List<Widget> myList = [];
     for (var i = 0; i < 15; i++) {
       myList.add(Image(
-          image: SettingsHelper.isDarkMode(widget.settingsController.themeMode)
+          image: SettingsService.isDarkMode(widget.settingsController.themeMode)
               ? senewrsLogoLight
               : senewrsLogoDark));
       myList.add(Text(i.toString()));

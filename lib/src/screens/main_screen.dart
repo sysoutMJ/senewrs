@@ -3,12 +3,12 @@
 */
 
 import 'package:flutter/material.dart';
-import 'package:senewrs/src/helpers/settings_helper.dart';
 import 'package:senewrs/src/screens/home_screen.dart';
 import 'package:senewrs/src/screens/saved_news_screen.dart';
 import 'package:senewrs/src/screens/settings_screen.dart';
 import 'package:senewrs/src/screens/trending_screen.dart';
 import 'package:senewrs/src/settings/settings_controller.dart';
+import 'package:senewrs/src/settings/settings_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key, required this.settingsController});
@@ -30,16 +30,6 @@ class MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    var window = WidgetsBinding.instance!.window;
-    window.onPlatformBrightnessChanged = () {
-      WidgetsBinding.instance?.handlePlatformBrightnessChanged();
-      // Forces to update the screen
-      setState(
-        () {
-          _reloadScreens();
-        },
-      );
-    };
     // Initializing screen
     _reloadScreens();
   }
@@ -116,15 +106,15 @@ class MainScreenState extends State<MainScreen> {
       ],
       type: BottomNavigationBarType.fixed,
       backgroundColor:
-          SettingsHelper.isDarkMode(widget.settingsController.themeMode)
+          SettingsService.isDarkMode(widget.settingsController.themeMode)
               ? darkBackgroundColor
               : lightBackgroundColor,
       selectedItemColor:
-          SettingsHelper.isDarkMode(widget.settingsController.themeMode)
+          SettingsService.isDarkMode(widget.settingsController.themeMode)
               ? darkSelectedItemColor
               : lightSelectedItemColor,
       unselectedItemColor:
-          SettingsHelper.isDarkMode(widget.settingsController.themeMode)
+          SettingsService.isDarkMode(widget.settingsController.themeMode)
               ? darkUnselectedItemColor
               : lightUnselectedItemColor,
       currentIndex: _selectedIndex,

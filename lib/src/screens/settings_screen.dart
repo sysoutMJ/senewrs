@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:senewrs/src/helpers/settings_helper.dart';
 import 'package:senewrs/src/settings/settings_controller.dart';
+import 'package:senewrs/src/settings/settings_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key, required this.settingsController});
@@ -16,15 +16,24 @@ class _SettingsScreeState extends State<SettingsScreen> {
   final lightIcon = const AssetImage("assets/images/light_icon.png");
   final darkIcon = const AssetImage("assets/images/dark_icon.png");
   // CHANGE TO USER PREFERENCE FONT
-  double fontSize = 18;
+  late double fontSize;
   double widgetGaps = 20;
+
+  @override
+  void initState() {
+    fontSize = widget.settingsController.settingsService.getFontSize();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Center(
+      // Dynamic Border
       child: FractionallySizedBox(
         alignment: Alignment.center,
+        // Only consume X percent of Screen
         widthFactor: 0.8,
+        // Main Column
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -41,7 +50,7 @@ class _SettingsScreeState extends State<SettingsScreen> {
   Widget _buildSystemThemeToggle() {
     return ElevatedButton(
       onPressed: () {
-        SettingsHelper.isDarkMode(widget.settingsController.themeMode)
+        SettingsService.isDarkMode(widget.settingsController.themeMode)
             ? widget.settingsController.updateThemeMode(ThemeMode.light)
             : widget.settingsController.updateThemeMode(ThemeMode.dark);
         // Rebuilding Screen
@@ -53,7 +62,7 @@ class _SettingsScreeState extends State<SettingsScreen> {
           CircleAvatar(
             radius: 20,
             backgroundImage:
-                SettingsHelper.isDarkMode(widget.settingsController.themeMode)
+                SettingsService.isDarkMode(widget.settingsController.themeMode)
                     ? darkIcon
                     : lightIcon,
           ),
@@ -61,10 +70,10 @@ class _SettingsScreeState extends State<SettingsScreen> {
           Expanded(
             child: Container(
               alignment: Alignment.center,
-              child:
-                  SettingsHelper.isDarkMode(widget.settingsController.themeMode)
-                      ? const Text("Dark Mode")
-                      : const Text("Light Mode"),
+              child: SettingsService.isDarkMode(
+                      widget.settingsController.themeMode)
+                  ? const Text("Dark Mode")
+                  : const Text("Light Mode"),
             ),
           ),
         ],
@@ -94,61 +103,66 @@ class _SettingsScreeState extends State<SettingsScreen> {
     const Color lightContainerColor = Color(0xffE7E7E7);
     const Color darkContainerColor = Color(0xff555555);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.blue,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Font Size Text
-          Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color:
-                  SettingsHelper.isDarkMode(widget.settingsController.themeMode)
-                      ? darkContainerColor
-                      : lightContainerColor,
-            ),
-            child: Text(
-              "Font Size",
-              style: TextStyle(fontSize: fontSize),
-            ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Font Size Text
+        Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color:
+                SettingsService.isDarkMode(widget.settingsController.themeMode)
+                    ? darkContainerColor
+                    : lightContainerColor,
           ),
-          // Gap
-          SizedBox(height: 10),
-          // Font Adjuster Controls
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.amber,
+          child: Text(
+            "Font Size",
+            style: TextStyle(fontSize: fontSize),
+          ),
+        ),
+        // Gap
+        const SizedBox(height: 10),
+        // Font Adjuster Controls
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Minus Button
+            ElevatedButton(
+              onPressed: () => setState(
+                () {
+                  fontSize -= fontSizeSteps;
+                  _updateFontSize(fontSize);
+                },
+              ),
+              style: ElevatedButton.styleFrom(
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(10),
+              ),
+              child: const Icon(Icons.remove),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Minus Button
-                ElevatedButton(
-                  onPressed: () => setState(() => fontSize -= fontSizeSteps),
-                  style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(10),
-                  ),
-                  child: const Icon(Icons.remove),
-                ),
-                Text(fontSize.toInt().toString()),
-                // Plus Button
-                ElevatedButton(
-                  onPressed: () => setState(() => fontSize += fontSizeSteps),
-                  style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(10),
-                  ),
-                  child: const Icon(Icons.add),
-                ),
-              ],
+            Text(fontSize.toInt().toString()),
+            // Plus Button
+            ElevatedButton(
+              onPressed: () => setState(
+                () {
+                  fontSize += fontSizeSteps;
+                  _updateFontSize(fontSize);
+                },
+              ),
+              style: ElevatedButton.styleFrom(
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(10),
+              ),
+              child: const Icon(Icons.add),
             ),
-          )
-        ],
-      ),
+          ],
+        )
+      ],
     );
+  }
+
+  // Used to save font size to system
+  void _updateFontSize(double fontSize) {
+    widget.settingsController.settingsService.saveFontSize(fontSize);
   }
 }
