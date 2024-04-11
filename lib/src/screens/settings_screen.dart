@@ -16,15 +16,7 @@ class _SettingsScreeState extends State<SettingsScreen> {
   // Easy to change values
   final lightIcon = const AssetImage("assets/images/light_icon.png");
   final darkIcon = const AssetImage("assets/images/dark_icon.png");
-  // CHANGE TO USER PREFERENCE FONT
-  late double fontSize;
   double widgetGaps = 20;
-
-  @override
-  void initState() {
-    fontSize = widget.settingsController.settingsService.getFontSize();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +112,8 @@ class _SettingsScreeState extends State<SettingsScreen> {
           ),
           child: Text(
             "Font Size",
-            style: GoogleFonts.robotoSerif(fontSize: fontSize),
+            style: GoogleFonts.robotoSerif(
+                fontSize: widget.settingsController.fontSize),
           ),
         ),
         // Gap
@@ -133,8 +126,8 @@ class _SettingsScreeState extends State<SettingsScreen> {
             ElevatedButton(
               onPressed: () => setState(
                 () {
-                  fontSize -= fontSizeSteps;
-                  _updateFontSize(fontSize);
+                  _updateFontSize(
+                      widget.settingsController.fontSize - fontSizeSteps);
                 },
               ),
               style: ElevatedButton.styleFrom(
@@ -143,13 +136,13 @@ class _SettingsScreeState extends State<SettingsScreen> {
               ),
               child: const Icon(Icons.remove),
             ),
-            Text(fontSize.toInt().toString()),
+            Text(widget.settingsController.fontSize.toInt().toString()),
             // Plus Button
             ElevatedButton(
               onPressed: () => setState(
                 () {
-                  fontSize += fontSizeSteps;
-                  _updateFontSize(fontSize);
+                  _updateFontSize(
+                      widget.settingsController.fontSize + fontSizeSteps);
                 },
               ),
               style: ElevatedButton.styleFrom(
@@ -166,6 +159,6 @@ class _SettingsScreeState extends State<SettingsScreen> {
 
   // Used to save font size to system
   void _updateFontSize(double fontSize) {
-    widget.settingsController.settingsService.saveFontSize(fontSize);
+    widget.settingsController.updateFontSize(fontSize);
   }
 }

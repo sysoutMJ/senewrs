@@ -27,31 +27,36 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     print("building homescreen");
-    return SingleChildScrollView(
-      child: Center(
-        child: FractionallySizedBox(
-          widthFactor: 0.8,
-          child: Container(
-            decoration: BoxDecoration(color: Colors.amber),
-            child: Column(
-              children: [
-                // Senewrs Logo
-                Image(
-                    image: SettingsService.isDarkMode(
-                            widget.settingsController.themeMode)
-                        ? senewrsLogoLight
-                        : senewrsLogoDark),
-                // App Name
-                Text(
-                  "SENEWRS",
-                  style: _appNameStyle,
+    return ListenableBuilder(
+      listenable: widget.settingsController,
+      builder: (BuildContext context, Widget? child) {
+        return SingleChildScrollView(
+          child: Center(
+            child: FractionallySizedBox(
+              widthFactor: 0.8,
+              child: Container(
+                decoration: BoxDecoration(color: Colors.amber),
+                child: Column(
+                  children: [
+                    // Senewrs Logo
+                    Image(
+                        image: SettingsService.isDarkMode(
+                                widget.settingsController.themeMode)
+                            ? senewrsLogoLight
+                            : senewrsLogoDark),
+                    // App Name
+                    Text(
+                      "SENEWRS",
+                      style: _appNameStyle,
+                    ),
+                    _buildSearchWidget()
+                  ],
                 ),
-                _buildSearchWidget()
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

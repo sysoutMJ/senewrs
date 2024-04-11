@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// you'd like to store settings on a web server, use the http package.
 class SettingsService {
   late final SharedPreferences _sharedPrefs;
-  final double defaultFontSize = 18;
 
   // Loading SharedPreferences instance
   Future<void> initPrefs() async {
@@ -38,12 +37,12 @@ class SettingsService {
   }
 
   // Saving preferred font size
-  Future<void> saveFontSize(double fontSize) async {
+  Future<void> updateFontSize(double fontSize) async {
     await _sharedPrefs.setDouble("fontSize", fontSize);
   }
 
   // Retrieving user-saved font size
-  double getFontSize() {
-    return _sharedPrefs.getDouble("fontSize") ?? defaultFontSize;
+  Future<double> getFontSize() async {
+    return _sharedPrefs.getDouble("fontSize") ?? 18.0;
   }
 }

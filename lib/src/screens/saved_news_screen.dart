@@ -13,6 +13,11 @@ class SavedNewsScreen extends StatefulWidget {
 class _SavedNewsScreenState extends State<SavedNewsScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Text("SavedNewsScre2en");
+    return ListenableBuilder(
+      listenable: widget.settingsController,
+      builder: (BuildContext context, Widget? child) {
+        return const Text("SavedNewsScre2en");
+      },
+    );
   }
 }

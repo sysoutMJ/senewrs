@@ -21,10 +21,15 @@ class _TrendingScreenState extends State<TrendingScreen> {
   @override
   Widget build(BuildContext context) {
     print("building trendingscreen");
-    return SingleChildScrollView(
-      child: Column(
-        children: _test(),
-      ),
+    return ListenableBuilder(
+      listenable: widget.settingsController,
+      builder: (BuildContext context, Widget? child) {
+        return SingleChildScrollView(
+          child: Column(
+            children: _test(),
+          ),
+        );
+      },
     );
   }
 

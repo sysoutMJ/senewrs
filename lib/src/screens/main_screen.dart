@@ -46,7 +46,7 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    rebuildAllChildren(context);
+    // rebuildAllChildren(context);
     return Scaffold(
       bottomNavigationBar: _buildBottomNavBar(),
       // Body changes screen according to selectedIndex
@@ -55,16 +55,6 @@ class MainScreenState extends State<MainScreen> {
         children: _appScreens,
       ),
     );
-  }
-
-  // Rebuilds all screens when app theme has updated
-  void rebuildAllChildren(BuildContext context) {
-    void rebuild(Element el) {
-      el.markNeedsBuild();
-      el.visitChildren(rebuild);
-    }
-
-    (context as Element).visitChildren(rebuild);
   }
 
   // Returns the Bottom Navigation Bar Widget

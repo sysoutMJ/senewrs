@@ -8,10 +8,10 @@ import 'settings_service.dart';
 /// Controllers glue Data Services to Flutter Widgets. The SettingsController
 /// uses the SettingsService to store and retrieve user settings.
 class SettingsController with ChangeNotifier {
-  SettingsController(this.settingsService);
+  SettingsController(this._settingsService);
 
   // Make SettingsService a private variable so it is not used directly.
-  final SettingsService settingsService;
+  final SettingsService _settingsService;
 
   // Make ThemeMode a private variable so it is not updated directly without
   // also persisting the changes with the SettingsService.
@@ -20,13 +20,22 @@ class SettingsController with ChangeNotifier {
   // Allow Widgets to read the user's preferred ThemeMode.
   ThemeMode get themeMode => _themeMode;
 
+  // Default Font Size
+  double _fontSize = 18;
+
+  // Getter of font size
+  double get fontSize => _fontSize;
+
   /// Load the user's settings from the SettingsService. It may load from a
   /// local database or the internet. The controller only knows it can load the
   /// settings from the service.
   Future<void> loadSettings() async {
     // Initializing shared preferences that will load user settings
-    await settingsService.initPrefs();
-    _themeMode = await settingsService.themeMode();
+    await _settingsService.initPrefs();
+    // Getting system theme mode
+    _themeMode = await _settingsService.themeMode();
+    // Getting system font size
+    _fontSize = await _settingsService.getFontSize();
 
     // Important! Inform listeners a change has occurred.
     notifyListeners();
@@ -47,6 +56,14 @@ class SettingsController with ChangeNotifier {
 
     // Persist the changes to a local database or the internet using the
     // SettingService.
-    await settingsService.updateThemeMode(newThemeMode);
+    await _settingsService.updateThemeMode(newThemeMode);
+  }
+
+  // Calling service to update font size then notify other screens of changes
+  Future<void> updateFontSize(double fontSize) async {
+    await _settingsService.updateFontSize(fontSize);
+    // Updating font size
+    _fontSize = fontSize;
+    notifyListeners();
   }
 }
