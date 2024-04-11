@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: MaterialStateProperty.all(Colors.black),
+        backgroundColor: MaterialStateProperty.all(const Color(0xffD9D9D9)),
       ),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
