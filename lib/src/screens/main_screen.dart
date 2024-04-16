@@ -21,38 +21,61 @@ class MainScreen extends StatefulWidget {
 class MainScreenState extends State<MainScreen> {
   // Current Selected Screen Index
   int _selectedIndex = 0;
-  // List of Screens
-  late List<Widget> _appScreens;
 
-  // Makes sure that screen will listen to system theme mode changes
-  // TO BE REMOVED
-  @override
-  void initState() {
-    super.initState();
-    // Initializing screen
-    _reloadScreens();
-  }
-
-  // Reloads Screen to sync with app theme update
-  void _reloadScreens() {
-    _appScreens = <Widget>[
-      TrendingScreen(settingsController: widget.settingsController),
-      HomeScreen(settingsController: widget.settingsController),
-      SavedNewsScreen(settingsController: widget.settingsController),
-      SettingsScreen(settingsController: widget.settingsController)
-    ];
-    print("reloaded!");
-  }
+  // Keys for maintaining state?
+  final _trendingScreen = GlobalKey<NavigatorState>();
+  final _homeScreen = GlobalKey<NavigatorState>();
+  final _savedNewsScreen = GlobalKey<NavigatorState>();
+  final _settingsScreen = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
     // rebuildAllChildren(context);
     return Scaffold(
       bottomNavigationBar: _buildBottomNavBar(),
-      // Body changes screen according to selectedIndex
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _appScreens,
+      // Helps to prevent app from crashing when using back button in homescreen
+      body: WillPopScope(
+        onWillPop: () async {
+          return !await _homeScreen.currentState!.maybePop();
+        },
+        // Body changes screen according to selectedIndex
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: <Widget>[
+            Navigator(
+              key: _trendingScreen,
+              onGenerateRoute: (route) => MaterialPageRoute(
+                settings: route,
+                builder: (context) => TrendingScreen(
+                    settingsController: widget.settingsController),
+              ),
+            ),
+            Navigator(
+              key: _homeScreen,
+              onGenerateRoute: (route) => MaterialPageRoute(
+                settings: route,
+                builder: (context) =>
+                    HomeScreen(settingsController: widget.settingsController),
+              ),
+            ),
+            Navigator(
+              key: _savedNewsScreen,
+              onGenerateRoute: (route) => MaterialPageRoute(
+                settings: route,
+                builder: (context) => SavedNewsScreen(
+                    settingsController: widget.settingsController),
+              ),
+            ),
+            Navigator(
+              key: _settingsScreen,
+              onGenerateRoute: (route) => MaterialPageRoute(
+                settings: route,
+                builder: (context) => SettingsScreen(
+                    settingsController: widget.settingsController),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -88,7 +111,34 @@ class MainScreenState extends State<MainScreen> {
       type: BottomNavigationBarType.fixed,
       currentIndex: _selectedIndex,
       iconSize: iconSize,
-      onTap: (index) => setState(() => _selectedIndex = index),
+      onTap: (index) => _onTap(index, context),
     );
+  }
+
+  // Allows to go back by tapping the same bottom nav bar icon again
+  void _onTap(int val, BuildContext context) {
+    if (_selectedIndex == val) {
+      switch (val) {
+        case 0:
+          _trendingScreen.currentState?.popUntil((route) => route.isFirst);
+          break;
+        case 1:
+          _homeScreen.currentState?.popUntil((route) => route.isFirst);
+          break;
+        case 2:
+          _savedNewsScreen.currentState?.popUntil((route) => route.isFirst);
+          break;
+        case 3:
+          _settingsScreen.currentState?.popUntil((route) => route.isFirst);
+          break;
+        default:
+      }
+    } else {
+      if (mounted) {
+        setState(() {
+          _selectedIndex = val;
+        });
+      }
+    }
   }
 }

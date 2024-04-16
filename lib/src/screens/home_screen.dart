@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:senewrs/src/screens/news_screen.dart';
 import 'package:senewrs/src/settings/settings_controller.dart';
 import 'package:senewrs/src/settings/settings_service.dart';
 
@@ -31,39 +32,48 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     print("building homescreen");
-    return ListenableBuilder(
-      listenable: widget.settingsController,
-      builder: (BuildContext context, Widget? child) {
-        return SingleChildScrollView(
-          child: Center(
-            child: FractionallySizedBox(
-              widthFactor: 0.9,
-              child: Container(
-                decoration: BoxDecoration(color: Colors.amber),
-                child: Column(
-                  children: [
-                    // Senewrs Logo
-                    Image(
-                        image: SettingsService.isDarkMode(
-                                widget.settingsController.themeMode)
-                            ? _senewrsLogoLight
-                            : _senewrsLogoDark),
-                    // App Name
-                    Text(
-                      "SENEWRS",
-                      style: _appNameStyle,
+    return Navigator(
+      onGenerateRoute: (RouteSettings settings) {
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (BuildContext context) {
+            return ListenableBuilder(
+              listenable: widget.settingsController,
+              builder: (BuildContext context, Widget? child) {
+                return SingleChildScrollView(
+                  child: Center(
+                    child: FractionallySizedBox(
+                      widthFactor: 0.9,
+                      child: Container(
+                        decoration: BoxDecoration(color: Colors.amber),
+                        child: Column(
+                          children: [
+                            // Senewrs Logo
+                            Image(
+                                image: SettingsService.isDarkMode(
+                                        widget.settingsController.themeMode)
+                                    ? _senewrsLogoLight
+                                    : _senewrsLogoDark),
+                            // App Name
+                            Text(
+                              "SENEWRS",
+                              style: _appNameStyle,
+                            ),
+                            // Search Widget
+                            _buildSearchWidget(),
+                            // Space between news Buttons and Search widgets
+                            SizedBox(height: 20),
+                            // News Buttons
+                            _buildNewsButtons(),
+                          ],
+                        ),
+                      ),
                     ),
-                    // Search Widget
-                    _buildSearchWidget(),
-                    // Space between news Buttons and Search widgets
-                    SizedBox(height: 20),
-                    // News Buttons
-                    _buildNewsButtons(),
-                  ],
-                ),
-              ),
-            ),
-          ),
+                  ),
+                );
+              },
+            );
+          },
         );
       },
     );
@@ -164,7 +174,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          onPressed: () => print(category),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (BuildContext context) => NewsScreen(),
+            ),
+          ),
           child: Text(
             category,
             overflow: TextOverflow.ellipsis,
