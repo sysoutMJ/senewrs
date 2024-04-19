@@ -41,6 +41,9 @@ class _SettingsScreeState extends State<SettingsScreen> {
 
   // Builds System Theme Toggle Widget
   Widget _buildSystemThemeToggle() {
+    var fontSize = widget.settingsController.fontSize > 31.0
+        ? 30.0
+        : widget.settingsController.fontSize;
     return ElevatedButton(
       onPressed: () {
         SettingsService.isDarkMode(widget.settingsController.themeMode)
@@ -67,7 +70,11 @@ class _SettingsScreeState extends State<SettingsScreen> {
                 SettingsService.isDarkMode(widget.settingsController.themeMode)
                     ? "Dark Mode"
                     : "Light Mode",
-                style: GoogleFonts.robotoSerif(),
+                style: GoogleFonts.robotoSerif(
+                  textStyle: TextStyle(
+                    fontSize: fontSize,
+                  ),
+                ),
               ),
             ),
           ),
@@ -124,12 +131,24 @@ class _SettingsScreeState extends State<SettingsScreen> {
           children: [
             // Minus Button
             ElevatedButton(
-              onPressed: () => setState(
-                () {
-                  _updateFontSize(
-                      widget.settingsController.fontSize - fontSizeSteps);
-                },
-              ),
+              onPressed: () {
+                // If font size is > 28
+                if (widget.settingsController.fontSize > 28) {
+                  setState(
+                    () {
+                      _updateFontSize(
+                          widget.settingsController.fontSize - fontSizeSteps);
+                    },
+                  );
+                  // else, show error
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Minimum size of font is 27!"),
+                    ),
+                  );
+                }
+              },
               style: ElevatedButton.styleFrom(
                 shape: const CircleBorder(),
                 padding: const EdgeInsets.all(10),
@@ -141,8 +160,16 @@ class _SettingsScreeState extends State<SettingsScreen> {
             ElevatedButton(
               onPressed: () => setState(
                 () {
-                  _updateFontSize(
-                      widget.settingsController.fontSize + fontSizeSteps);
+                  if (widget.settingsController.fontSize < 66) {
+                    _updateFontSize(
+                        widget.settingsController.fontSize + fontSizeSteps);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Maximum size of font is 66!"),
+                      ),
+                    );
+                  }
                 },
               ),
               style: ElevatedButton.styleFrom(

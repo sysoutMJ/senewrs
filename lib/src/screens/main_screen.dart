@@ -28,6 +28,50 @@ class MainScreenState extends State<MainScreen> {
   final _savedNewsScreen = GlobalKey<NavigatorState>();
   final _settingsScreen = GlobalKey<NavigatorState>();
 
+  late final _navScreens;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    // Initializing navigation screens; to prevent it from being frequently reloading
+    _navScreens = <Widget>[
+      Navigator(
+        key: _trendingScreen,
+        onGenerateRoute: (route) => MaterialPageRoute(
+          settings: route,
+          builder: (context) =>
+              TrendingScreen(settingsController: widget.settingsController),
+        ),
+      ),
+      Navigator(
+        key: _homeScreen,
+        onGenerateRoute: (route) => MaterialPageRoute(
+          settings: route,
+          builder: (context) =>
+              HomeScreen(settingsController: widget.settingsController),
+        ),
+      ),
+      Navigator(
+        key: _savedNewsScreen,
+        onGenerateRoute: (route) => MaterialPageRoute(
+          settings: route,
+          builder: (context) =>
+              SavedNewsScreen(settingsController: widget.settingsController),
+        ),
+      ),
+      Navigator(
+        key: _settingsScreen,
+        onGenerateRoute: (route) => MaterialPageRoute(
+          settings: route,
+          builder: (context) =>
+              SettingsScreen(settingsController: widget.settingsController),
+        ),
+      )
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     // rebuildAllChildren(context);
@@ -41,40 +85,7 @@ class MainScreenState extends State<MainScreen> {
         // Body changes screen according to selectedIndex
         child: IndexedStack(
           index: _selectedIndex,
-          children: <Widget>[
-            Navigator(
-              key: _trendingScreen,
-              onGenerateRoute: (route) => MaterialPageRoute(
-                settings: route,
-                builder: (context) => TrendingScreen(
-                    settingsController: widget.settingsController),
-              ),
-            ),
-            Navigator(
-              key: _homeScreen,
-              onGenerateRoute: (route) => MaterialPageRoute(
-                settings: route,
-                builder: (context) =>
-                    HomeScreen(settingsController: widget.settingsController),
-              ),
-            ),
-            Navigator(
-              key: _savedNewsScreen,
-              onGenerateRoute: (route) => MaterialPageRoute(
-                settings: route,
-                builder: (context) => SavedNewsScreen(
-                    settingsController: widget.settingsController),
-              ),
-            ),
-            Navigator(
-              key: _settingsScreen,
-              onGenerateRoute: (route) => MaterialPageRoute(
-                settings: route,
-                builder: (context) => SettingsScreen(
-                    settingsController: widget.settingsController),
-              ),
-            )
-          ],
+          children: _navScreens,
         ),
       ),
     );

@@ -21,7 +21,7 @@ class SettingsController with ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
 
   // Default Font Size
-  double _fontSize = 18;
+  double _fontSize = 27;
 
   // Getter of font size
   double get fontSize => _fontSize;
