@@ -4,9 +4,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:senewrs/src/screens/home_screen.dart';
+import 'package:senewrs/src/screens/news_screen.dart';
 import 'package:senewrs/src/screens/saved_news_screen.dart';
 import 'package:senewrs/src/screens/settings_screen.dart';
-import 'package:senewrs/src/screens/trending_screen.dart';
+
 import 'package:senewrs/src/settings/settings_controller.dart';
 
 class MainScreen extends StatefulWidget {
@@ -20,7 +21,7 @@ class MainScreen extends StatefulWidget {
 
 class MainScreenState extends State<MainScreen> {
   // Current Selected Screen Index
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   // Keys for maintaining state?
   final _trendingScreen = GlobalKey<NavigatorState>();
@@ -41,8 +42,13 @@ class MainScreenState extends State<MainScreen> {
         key: _trendingScreen,
         onGenerateRoute: (route) => MaterialPageRoute(
           settings: route,
-          builder: (context) =>
-              TrendingScreen(settingsController: widget.settingsController),
+          builder: (context) => NewsScreen(
+            settingsController: widget.settingsController,
+            category: "Trending",
+            httpQuery:
+                "http://api.mediastack.com/v1/news?access_key=d6c18569c8f76b70358140cd212c058c&categories=general&languages=en&limit=100&sources=bbc,cnn,nbc",
+            hasBackButton: false,
+          ),
         ),
       ),
       Navigator(
@@ -80,7 +86,19 @@ class MainScreenState extends State<MainScreen> {
       // Helps to prevent app from crashing when using back button in homescreen
       body: WillPopScope(
         onWillPop: () async {
-          return !await _homeScreen.currentState!.maybePop();
+          // Makes sure back button will work on other screens
+          switch (_selectedIndex) {
+            case 0:
+              return !await _trendingScreen.currentState!.maybePop();
+            case 1:
+              return !await _homeScreen.currentState!.maybePop();
+            case 2:
+              return !await _savedNewsScreen.currentState!.maybePop();
+            case 3:
+              return !await _settingsScreen.currentState!.maybePop();
+            default:
+              throw Exception("Defaulted on home_screen");
+          }
         },
         // Body changes screen according to selectedIndex
         child: IndexedStack(

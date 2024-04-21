@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:senewrs/src/models/news.dart';
+import 'package:senewrs/src/screens/detailed_news_screen.dart';
 import 'package:senewrs/src/settings/settings_service.dart';
 
 class NewsContainer extends StatefulWidget {
@@ -27,8 +28,30 @@ class _NewsContainerState extends State<NewsContainer> {
   // Variable that will change bookmark icon
   var _wasSaved = false;
 
+  // returns true if news is saved
+  bool _isNotSaved() {
+    if (_wasSaved == true) {
+      return false;
+    }
+    return true;
+  }
+
+  // Saves news
+  void _saveNews() {
+    setState(() => _wasSaved = !_wasSaved);
+    // CODE TO SAVE NEWS TO JSON
+    print("saving news...");
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Successfully saved news!"),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Easy to change values
     var newsTitleFontStyle = GoogleFonts.robotoSerif(
       textStyle: TextStyle(
           fontSize: widget.settingsController.fontSize * 0.6,
@@ -42,6 +65,21 @@ class _NewsContainerState extends State<NewsContainer> {
 
     // Used to capture user tap on container
     return GestureDetector(
+      // On tap, navigate to detailed news screen
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (BuildContext context) {
+            // Makes sure to be able to listen to settings changes
+            return ListenableBuilder(
+              listenable: widget.settingsController,
+              builder: (BuildContext context, Widget? child) =>
+                  DetailedNewsScreen(
+                      settingsController: widget.settingsController,
+                      newsItem: widget.newsItem),
+            );
+          },
+        ),
+      ),
       child: Container(
         // Set background color of container
         decoration: BoxDecoration(
@@ -62,11 +100,24 @@ class _NewsContainerState extends State<NewsContainer> {
                 imageUrl: widget.newsItem.imgLink,
                 placeholder: (context, url) =>
                     const CircularProgressIndicator(),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
+                // Returning App Logo if failed to load imagee
+                errorWidget: (context, url, error) {
+                  if (SettingsService.isDarkMode(
+                      widget.settingsController.themeMode)) {
+                    return const Image(
+                      image: AssetImage("assets/images/senewrs_logo_light.png"),
+                    );
+                  } else {
+                    return const Image(
+                      image: AssetImage("assets/images/senewrs_logo_dark.png"),
+                    );
+                  }
+                },
               ),
               // News Title
               Padding(
                 padding: EdgeInsets.only(
+                  top: 10,
                   left: constraints.maxWidth * 0.035,
                   right: constraints.maxWidth * 0.035,
                 ),
@@ -78,38 +129,26 @@ class _NewsContainerState extends State<NewsContainer> {
               // Date, News Publisher
               Padding(
                 padding: EdgeInsets.only(
+                  top: 10,
                   left: constraints.maxWidth * 0.035,
                   right: constraints.maxWidth * 0.035,
                 ),
-                child: Row(
+                // Widget that prevents overflow when size is increased
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    // Date
-                    Expanded(
-                      flex: 1,
-                      child: Text(
-                        widget.newsItem.datePublished,
-                        style: otherTextFontStyle,
-                      ),
+                    // Publisher
+                    Text(
+                      widget.newsItem.source,
+                      style: otherTextFontStyle,
                     ),
-                    Expanded(
-                      flex: 5,
-                      child: Row(
-                        children: [
-                          // Publisher
-                          Text(
-                            widget.newsItem.source,
-                            style: otherTextFontStyle,
-                          ),
-                          // Bookmark icon
-                          IconButton(
-                              onPressed: () =>
-                                  setState(() => _wasSaved = !_wasSaved),
-                              icon: _wasSaved
-                                  ? const Icon(Icons.bookmark_added)
-                                  : const Icon(Icons.bookmark_add_outlined),
-                              iconSize: iconSize),
-                        ],
-                      ),
+                    // Bookmark icon
+                    IconButton(
+                      onPressed: _isNotSaved() ? _saveNews : null,
+                      icon: _wasSaved
+                          ? const Icon(Icons.bookmark_added)
+                          : const Icon(Icons.bookmark_add_outlined),
+                      iconSize: iconSize,
                     ),
                   ],
                 ),

@@ -6,6 +6,7 @@ class News {
     required this.author,
     required this.source,
     required this.imgLink,
+    required this.url,
     required this.datePublished,
   });
 
@@ -14,6 +15,7 @@ class News {
   final author;
   final source;
   final imgLink;
+  final url;
   final datePublished;
 
   // Returns instance of News from HTTP response
@@ -24,6 +26,7 @@ class News {
       author: json["author"] ?? "author",
       source: json["source"] ?? "source",
       imgLink: json["image"] ?? "image",
+      url: json["url"] ?? "url",
       datePublished: json["datePublished"] ?? "date",
     );
   }

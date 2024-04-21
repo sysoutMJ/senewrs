@@ -160,10 +160,12 @@ class _SettingsScreeState extends State<SettingsScreen> {
             ElevatedButton(
               onPressed: () => setState(
                 () {
+                  // Limiting size to 66
                   if (widget.settingsController.fontSize < 66) {
                     _updateFontSize(
                         widget.settingsController.fontSize + fontSizeSteps);
                   } else {
+                    // Show Snackbar
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text("Maximum size of font is 66!"),
