@@ -45,4 +45,14 @@ class SettingsService {
   Future<double> getFontSize() async {
     return _sharedPrefs.getDouble("fontSize") ?? 18.0;
   }
+
+  // Retrieving savedNews from storage
+  Future<String> getSavedNews() async {
+    return _sharedPrefs.getString("savedNews") ?? "";
+  }
+
+  // Saving saved news
+  Future<void> saveSavedNews(String newsList) async {
+    await _sharedPrefs.setString("savedNews", newsList);
+  }
 }

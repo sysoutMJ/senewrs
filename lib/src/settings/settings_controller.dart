@@ -26,6 +26,10 @@ class SettingsController with ChangeNotifier {
   // Getter of font size
   double get fontSize => _fontSize;
 
+  // Getter of saved news
+  late String _savedNews;
+  String get savedNews => _savedNews;
+
   /// Load the user's settings from the SettingsService. It may load from a
   /// local database or the internet. The controller only knows it can load the
   /// settings from the service.
@@ -36,6 +40,8 @@ class SettingsController with ChangeNotifier {
     _themeMode = await _settingsService.themeMode();
     // Getting system font size
     _fontSize = await _settingsService.getFontSize();
+    // Getting saved news
+    _savedNews = await _settingsService.getSavedNews();
 
     // Important! Inform listeners a change has occurred.
     notifyListeners();
@@ -65,5 +71,16 @@ class SettingsController with ChangeNotifier {
     // Updating font size
     _fontSize = fontSize;
     notifyListeners();
+  }
+
+  // Retrieving saved news
+  Future<void> getSavedNews() async {
+    _savedNews = await _settingsService.getSavedNews();
+    notifyListeners();
+  }
+
+  // Saving Saved News
+  Future<void> saveSavedNews(String newsList) async {
+    await _settingsService.saveSavedNews(newsList);
   }
 }

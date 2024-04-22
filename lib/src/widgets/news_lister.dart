@@ -60,7 +60,8 @@ class _NewsListerState extends State<NewsLister> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           IconButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () =>
+                Navigator.of(context).popUntil((route) => route.isFirst),
             icon: const Icon(Icons.arrow_back_ios_new),
           ),
           Flexible(
@@ -73,10 +74,8 @@ class _NewsListerState extends State<NewsLister> {
         ],
       );
     } else {
-      return Text(
-        widget.category,
-        style: categoryTextTextStyle,
-      );
+      return Text(widget.category,
+          style: categoryTextTextStyle, overflow: TextOverflow.ellipsis);
     }
   }
 

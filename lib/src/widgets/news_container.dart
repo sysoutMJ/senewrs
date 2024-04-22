@@ -5,6 +5,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:senewrs/src/helpers/saved_news_manager.dart';
 import 'package:senewrs/src/models/news.dart';
 import 'package:senewrs/src/screens/detailed_news_screen.dart';
 import 'package:senewrs/src/settings/settings_service.dart';
@@ -37,14 +38,25 @@ class _NewsContainerState extends State<NewsContainer> {
   }
 
   // Saves news
-  void _saveNews() {
+  void _saveNews() async {
     setState(() => _wasSaved = !_wasSaved);
     // CODE TO SAVE NEWS TO JSON
     print("saving news...");
 
+    Text textWidget;
+
+    // Saving News to Storage; If successful
+    if (await SavedNewsManager(settingsController: widget.settingsController)
+        .saveSavedNews(widget.newsItem)) {
+      textWidget = const Text("Sucessfully saved news!");
+    } else {
+      textWidget = const Text("News is already saved!");
+    }
+
+    // Show snackbar message
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Successfully saved news!"),
+      SnackBar(
+        content: textWidget,
       ),
     );
   }

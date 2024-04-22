@@ -30,4 +30,14 @@ class News {
       datePublished: json["datePublished"] ?? "date",
     );
   }
+
+  Map toJson() => {
+        'newsTitle': newsTitle,
+        'description': description,
+        'author': author,
+        'source': source,
+        'imgLink': imgLink,
+        'url': url,
+        'datePublished': datePublished
+      };
 }
