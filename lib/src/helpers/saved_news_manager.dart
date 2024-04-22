@@ -4,7 +4,7 @@ import 'package:senewrs/src/settings/settings_controller.dart';
 
 class SavedNewsManager {
   SavedNewsManager({required this.settingsController}) {
-    getSavedNews();
+    _getSavedNews();
   }
 
   final SettingsController settingsController;
@@ -12,7 +12,7 @@ class SavedNewsManager {
   List<News> savedNews = List.empty(growable: true);
 
   // Retrieves saved news from storage
-  Future<void> getSavedNews() async {
+  Future<void> _getSavedNews() async {
     List<News> listOfNews = List.empty(growable: true);
 
     // For each news item in retrieved saved news
@@ -48,13 +48,42 @@ class SavedNewsManager {
 
     // Add news to saved news
     listOfNews.add(newsItem);
-    // Make list to string
-    String stringNews = jsonEncode(listOfNews);
+    // Make list to string then save to local storage
+    _savedNewsListState(jsonEncode(listOfNews));
+    // Returns true to indicate successful saving
+    return true;
+  }
+
+  // Returns true if successfully deleted news
+  Future<bool> deleteSavedNews(News newsItem) async {
+    // Retrieving current list of news
+    List<News> listOfNews = savedNews;
+
+    int index = 0;
+    // Iterate through all saved news
+    for (News news in listOfNews) {
+      // If same news, remove
+      if (newsItem.newsTitle == news.newsTitle &&
+          newsItem.author == news.author &&
+          newsItem.imgLink == news.imgLink) {
+        // Remove news
+        listOfNews.removeAt(index);
+        // Make list to string then save to local storage
+        _savedNewsListState(jsonEncode(listOfNews));
+        // Return true if successfully removed
+        return true;
+      }
+      ++index;
+    }
+    // Return false if wasnt removed
+    return false;
+  }
+
+  // Syncs changes to local storage
+  void _savedNewsListState(String stringNews) async {
     // Saving to storage
     settingsController.saveSavedNews(stringNews);
     // Updating news list
     await settingsController.getSavedNews();
-    // Returns true to indicate successful saving
-    return true;
   }
 }

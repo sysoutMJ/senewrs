@@ -30,6 +30,7 @@ class _SavedNewsScreenState extends State<SavedNewsScreen> {
             category: "Saved News",
             newsList: mySavedNewsManager.savedNews,
             hasBackButton: false,
+            hasSearchWidget: false,
           ),
         );
       },

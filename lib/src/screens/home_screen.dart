@@ -188,6 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
           category: category,
           httpQuery: _categoryHttpQuery,
           hasBackButton: true,
+          hasSearchWidget: true,
         ),
       ),
     );

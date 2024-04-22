@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:senewrs/src/helpers/saved_news_manager.dart';
 import 'package:senewrs/src/models/news.dart';
 import 'package:senewrs/src/settings/settings_controller.dart';
 import 'package:senewrs/src/widgets/news_container.dart';
@@ -16,12 +17,13 @@ class NewsLister extends StatefulWidget {
     required this.category,
     required this.newsList,
     required this.hasBackButton,
+    required this.hasSearchWidget,
   });
 
   final SettingsController settingsController;
   final String category;
   final List<News> newsList;
-  final bool hasBackButton;
+  final bool hasBackButton, hasSearchWidget;
 
   @override
   State<NewsLister> createState() => _NewsListerState();
@@ -38,7 +40,16 @@ class _NewsListerState extends State<NewsLister> {
         return FractionallySizedBox(
           widthFactor: 0.8,
           child: SafeArea(
-            child: _buildBody(),
+            child: Column(
+              children: [
+                // Category text
+                _buildHeader(),
+                // Search
+                _buildSearchWidget(),
+                // News List
+                _buildNewsList(),
+              ],
+            ),
           ),
         );
       },
@@ -79,51 +90,58 @@ class _NewsListerState extends State<NewsLister> {
     }
   }
 
-  // Returns the body of the page
-  Widget _buildBody() {
-    // Return this column if there is no news retrieved
+  // Returns Search Widget
+  Widget _buildSearchWidget() {
+    // Return search widget hasSearchWidget is true
+    if (widget.hasSearchWidget) {
+      return SearchWidget(settingsController: widget.settingsController);
+    }
+    // Return empty container if has no search widget
+    return Container();
+  }
+
+  // Returns scrollable list of news
+  Widget _buildNewsList() {
+    // If there is no news found
     if (widget.newsList.isEmpty) {
-      return Column(
-        children: [
-          // Category text
-          _buildHeader(),
-          // Search
-          SearchWidget(settingsController: widget.settingsController),
-          const Center(
-            child: Text("No News Found."),
-          ),
-        ],
-      );
+      return const Center(child: Text("No News Found."));
     }
 
-    // Returns this column if there is news retrieved
-    return Column(
-      children: [
-        // Category text
-        _buildHeader(),
-        // Search
-        SearchWidget(settingsController: widget.settingsController),
-        // Scrollable View; wraped in expanded to enable sticky header
-        Expanded(
-          child: ListView.separated(
-            physics: const ScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: widget.newsList.length,
-            // Builder for the separator
-            separatorBuilder: (context, int index) => const SizedBox(
-              height: 20,
-              width: 10,
-            ),
-            // Builder for News Container
-            itemBuilder: (context, int index) {
-              return NewsContainer(
-                settingsController: widget.settingsController,
-                newsItem: widget.newsList[index],
-              );
-            },
-          ),
+    // Else
+    // Scrollable View; wraped in expanded to enable sticky header
+    return Expanded(
+      child: ListView.separated(
+        physics: const ScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: widget.newsList.length,
+        // Builder for the separator
+        separatorBuilder: (context, int index) => const SizedBox(
+          height: 20,
+          width: 10,
         ),
-      ],
+        // Builder for News Container
+        itemBuilder: (context, int index) {
+          // Getting Saved News Manager instance to keep track of saved news
+          var savedNewsManager =
+              SavedNewsManager(settingsController: widget.settingsController);
+          var isAlreadySaved = false;
+
+          // Iterating through all saved news
+          for (News savedNews in savedNewsManager.savedNews) {
+            // If current news is in saved news, then set to true
+            if (widget.newsList[index].url == savedNews.url) {
+              isAlreadySaved = true;
+            }
+          }
+
+          // Return container
+          return NewsContainer(
+            isAlreadySaved: isAlreadySaved,
+            settingsController: widget.settingsController,
+            newsItem: widget.newsList[index],
+          );
+        },
+      ),
     );
   }
 }

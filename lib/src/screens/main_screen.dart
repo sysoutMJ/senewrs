@@ -48,6 +48,7 @@ class MainScreenState extends State<MainScreen> {
             httpQuery:
                 "http://api.mediastack.com/v1/news?access_key=d6c18569c8f76b70358140cd212c058c&categories=general&languages=en&limit=100&sources=bbc,cnn,nbc",
             hasBackButton: false,
+            hasSearchWidget: true,
           ),
         ),
       ),

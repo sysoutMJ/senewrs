@@ -8,13 +8,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:senewrs/src/helpers/saved_news_manager.dart';
 import 'package:senewrs/src/models/news.dart';
 import 'package:senewrs/src/screens/detailed_news_screen.dart';
+import 'package:senewrs/src/settings/settings_controller.dart';
 import 'package:senewrs/src/settings/settings_service.dart';
 
 class NewsContainer extends StatefulWidget {
-  const NewsContainer(
-      {super.key, required this.settingsController, required this.newsItem});
+  const NewsContainer({
+    super.key,
+    required this.settingsController,
+    required this.isAlreadySaved,
+    required this.newsItem,
+  });
 
-  final settingsController;
+  final SettingsController settingsController;
+  final bool isAlreadySaved;
   final News newsItem;
 
   @override
@@ -26,31 +32,53 @@ class _NewsContainerState extends State<NewsContainer> {
   final _lightModeContainerColor = const Color(0xffD9D9D9);
   final _darkModeContainerColor = const Color(0xff555555);
 
-  // Variable that will change bookmark icon
-  var _wasSaved = false;
+  late bool _wasSaved;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // Variable that will change bookmark icon
+    _wasSaved = widget.isAlreadySaved;
+  }
 
   // returns true if news is saved
   bool _isNotSaved() {
-    if (_wasSaved == true) {
-      return false;
-    }
-    return true;
+    return !_wasSaved;
   }
 
   // Saves news
   void _saveNews() async {
-    setState(() => _wasSaved = !_wasSaved);
-    // CODE TO SAVE NEWS TO JSON
     print("saving news...");
-
     Text textWidget;
 
     // Saving News to Storage; If successful
     if (await SavedNewsManager(settingsController: widget.settingsController)
         .saveSavedNews(widget.newsItem)) {
       textWidget = const Text("Sucessfully saved news!");
+      setState(() => _wasSaved = !_wasSaved);
     } else {
       textWidget = const Text("News is already saved!");
+    }
+
+    // Show snackbar message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: textWidget,
+      ),
+    );
+  }
+
+  void _deleteNews() async {
+    print("removing news...");
+    Text textWidget;
+
+    if (await SavedNewsManager(settingsController: widget.settingsController)
+        .deleteSavedNews(widget.newsItem)) {
+      textWidget = const Text("Sucessfully removed news!");
+      setState(() => _wasSaved = !_wasSaved);
+    } else {
+      textWidget = const Text("Unable to remove news!");
     }
 
     // Show snackbar message
@@ -156,9 +184,9 @@ class _NewsContainerState extends State<NewsContainer> {
                     ),
                     // Bookmark icon
                     IconButton(
-                      onPressed: _isNotSaved() ? _saveNews : null,
+                      onPressed: _isNotSaved() ? _saveNews : _deleteNews,
                       icon: _wasSaved
-                          ? const Icon(Icons.bookmark_added)
+                          ? const Icon(Icons.bookmark_remove)
                           : const Icon(Icons.bookmark_add_outlined),
                       iconSize: iconSize,
                     ),

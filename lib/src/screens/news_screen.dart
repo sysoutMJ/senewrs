@@ -15,12 +15,13 @@ class NewsScreen extends StatefulWidget {
       required this.settingsController,
       required this.category,
       required this.httpQuery,
-      required this.hasBackButton});
+      required this.hasBackButton,
+      required this.hasSearchWidget});
 
   final SettingsController settingsController;
   final String category;
   final String httpQuery;
-  final bool hasBackButton;
+  final bool hasBackButton, hasSearchWidget;
 
   @override
   State<NewsScreen> createState() => _NewsScreenState();
@@ -81,6 +82,7 @@ class _NewsScreenState extends State<NewsScreen> {
               category: widget.category,
               newsList: newsList,
               hasBackButton: widget.hasBackButton,
+              hasSearchWidget: widget.hasSearchWidget,
             );
           default:
             return const Text("defaulted");

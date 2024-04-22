@@ -82,5 +82,6 @@ class SettingsController with ChangeNotifier {
   // Saving Saved News
   Future<void> saveSavedNews(String newsList) async {
     await _settingsService.saveSavedNews(newsList);
+    getSavedNews();
   }
 }

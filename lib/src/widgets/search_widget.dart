@@ -51,17 +51,24 @@ class _SearchWidgetState extends State<SearchWidget> {
                       "http://api.mediastack.com/v1/news?access_key=d6c18569c8f76b70358140cd212c058c&categories=general&languages=en&keywords=${_searchController.text.toLowerCase()}&limit=100";
                 }
 
+                // Storing user search query
+                final searchQuery = _searchController.text;
+
                 // Navigate to page
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) => NewsScreen(
                       settingsController: widget.settingsController,
-                      category: '"${_searchController.text}"',
+                      category: '"${searchQuery}"',
                       httpQuery: _httpQuery,
                       hasBackButton: true,
+                      hasSearchWidget: true,
                     ),
                   ),
                 );
+
+                // Clear search bar
+                _searchController.clear();
               },
               style: FilledButton.styleFrom(
                 minimumSize: const Size(30, 64),
