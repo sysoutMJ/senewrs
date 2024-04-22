@@ -28,7 +28,7 @@ class NewsScreen extends StatefulWidget {
 }
 
 class _NewsScreenState extends State<NewsScreen> {
-  late final Future<Map> retrievedNews;
+  late Future<Map> retrievedNews;
 
 // Retrieves trending news from API
   Future<Map> getNews() async {
@@ -57,37 +57,42 @@ class _NewsScreenState extends State<NewsScreen> {
   @override
   Widget build(BuildContext context) {
     // Builder that handles Future Variables
-    return FutureBuilder(
-      future: retrievedNews,
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          // While still loading
-          case ConnectionState.waiting:
-            // Show Loading Screen
-            return const CircularProgressIndicator();
-          // When successfully retrieved
-          case ConnectionState.done:
-            // Initialize List
-            List<News> newsList = List.empty(growable: true);
-            // For each news in data in Map
-            for (var newsItem in snapshot.data!["data"]) {
-              // Add News Object to News List
-              newsList.add(
-                News.fromJson(newsItem),
-              );
+    return Center(
+      child: RefreshIndicator(
+        onRefresh: () => Future(() => setState(() => {})),
+        child: FutureBuilder(
+          future: retrievedNews,
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              // While still loading
+              case ConnectionState.waiting:
+                // Show Loading Screen
+                return const CircularProgressIndicator();
+              // When successfully retrieved
+              case ConnectionState.done:
+                // Initialize List
+                List<News> newsList = List.empty(growable: true);
+                // For each news in data in Map
+                for (var newsItem in snapshot.data!["data"]) {
+                  // Add News Object to News List
+                  newsList.add(
+                    News.fromJson(newsItem),
+                  );
+                }
+                // Widget that displays all news in list
+                return NewsLister(
+                  settingsController: widget.settingsController,
+                  category: widget.category,
+                  newsList: newsList,
+                  hasBackButton: widget.hasBackButton,
+                  hasSearchWidget: widget.hasSearchWidget,
+                );
+              default:
+                return const Text("defaulted");
             }
-            // Widget that displays all news in list
-            return NewsLister(
-              settingsController: widget.settingsController,
-              category: widget.category,
-              newsList: newsList,
-              hasBackButton: widget.hasBackButton,
-              hasSearchWidget: widget.hasSearchWidget,
-            );
-          default:
-            return const Text("defaulted");
-        }
-      },
+          },
+        ),
+      ),
     );
   }
 }
