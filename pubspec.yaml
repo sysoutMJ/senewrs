@@ -1,0 +1,63 @@
+name: senewrs
+description: "A new Flutter project."
+
+# Prevent accidental publishing to pub.dev.
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.2.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  shared_preferences: ^2.2.2
+  google_fonts: ^6.2.1
+  cached_network_image: ^3.3.1
+  http: ^1.2.1
+  sticky_headers: ^0.3.0+2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  # Enable generation of localized Strings from arb files.
+  generate: true
+
+  assets:
+    # Add assets from the images directory to the application.
+    - assets/images/
+    - assets/saved_news.json
+    # Default icons
+    - assets/not-selected-default-icons/light-default-trending-icon.png
+    - assets/not-selected-default-icons/light-default-setting-icon.png
+    - assets/not-selected-default-icons/light-default-saved-news-icon.png
+    - assets/not-selected-default-icons/light-default-home-icon.png
+    - assets/not-selected-default-icons/dark-default-trending-icon.png
+    - assets/not-selected-default-icons/dark-default-setting-icon.png
+    - assets/not-selected-default-icons/dark-default-saved-news-icon.png
+    - assets/not-selected-default-icons/dark-default-home-icon.png
+    # Selected icons
+    - assets/when-selected-icons/dark-home-selected-icon.png
+    - assets/when-selected-icons/dark-saved-news-selected-icon.png
+    - assets/when-selected-icons/dark-settings-selected-icon.png
+    - assets/when-selected-icons/dark-trending-selected-icon.png
+    - assets/when-selected-icons/light-home-selected-icon.png
+    - assets/when-selected-icons/light-saved-news-selected-icon.png
+    - assets/when-selected-icons/light-settings-selected-icon.png
+    - assets/when-selected-icons/light-trending-selected-icon.png
+    # Back button
+    - assets/images/light-mode-back-button.png
+    - assets/images/dark-mode-back-button.png
+    # Search button
+    - assets/images/light-mode-search-button.png
+
+
